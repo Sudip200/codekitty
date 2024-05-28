@@ -10,15 +10,20 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
        if(tab.url.includes(url)){
 
         //get cookie from the tab
-        chrome.cookies.getAll({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api'}, function(cookies) {
-            console.log(cookies);
-        });
-
-        chrome.scripting.executeScript({target: {tabId: tabId}, files:["content.js"]}).then(() => {
-            chrome.tabs.sendMessage(tabId, {message: "updated"}, response => {
-                console.log(response);
+        chrome.cookies.get({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api',name:'token'}, function(cookie) {
+           if(cookie){
+            chrome.scripting.executeScript({target: {tabId: tabId}, files:["content.js"]}).then(() => {
+                chrome.tabs.sendMessage(tabId, {message: "updated"}, response => {
+                    console.log(response);
+                });
             });
+           }else{
+            chrome.tabs.create({url:'auth.html'});
+           }
         });
+        
+
+       
        }
     }
 });

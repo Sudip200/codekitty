@@ -23,7 +23,9 @@
     ],
     
     "host_permissions": [
-      "https://github.com/*"
+      "https://github.com/*",
+       "https://sudipto.eastus.cloudapp.azure.com:8080/*"
+
     ],
     "background": {
       "service_worker": "background.js"
