@@ -11,6 +11,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
         //get cookie from the tab
         chrome.cookies.get({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api',name:'token'}, function(cookie) {
+            console.log(cookie);
            if(cookie){
             chrome.scripting.executeScript({target: {tabId: tabId}, files:["content.js"]}).then(() => {
                 chrome.tabs.sendMessage(tabId, {message: "updated"}, response => {

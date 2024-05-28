@@ -2,15 +2,82 @@
 <html>
 <head>
   <title>Authenticate</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #fff;
+      font-family: Consolas, monospace;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-wrapper {
+      width: 300px;
+      padding: 20px;
+      background-color: #2b2a2a;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo {
+      text-align: center;
+      border-radius: 50%;
+      overflow: hidden;
+      width: 120px;
+      height: 120px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+    }
+
+    button[type="submit"] {
+      background-color: green;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: darkgreen;
+    }
+  </style>
   <script src="auth.js"></script>
 </head>
 <body>
-  <form id="auth-form">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br>
-    <button type="submit">Login</button>
-  </form>
+  <div class="container">
+    <div class="form-wrapper">
+      <div class="logo">
+        <img src="images/icon128.png" alt="Logo">
+      </div>
+      <form id="auth-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
