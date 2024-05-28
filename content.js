@@ -300,7 +300,7 @@ async function explainSelectedText(){
     });
     evSource.onopen = function (event) {
           console.log('Connection opened');
-          newElement.innerHTML = "Please wait...";
+          newElement.innerHTML = "Please wait....";
       };
       evSource.onmessage = function (event) {
         if(event.data === "sdjnjsdnsdka"){
