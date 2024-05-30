@@ -5,6 +5,7 @@ var textar = document.getElementById('read-only-cursor-text-area');
 var sticyheader=document.getElementById('StickyHeader');
 var newElement = document.getElementById('newElement');
 var closeDiv = document.getElementById('closeDiv');
+var isAuth = false;
 
 var files='';
 var wholeText='';
@@ -12,6 +13,7 @@ var innerhtml='';
 for(var i=0;i<filenames.length-1;i++){
     files += filenames[i].innerText+'  ';
 }
+
 var newElement = document.createElement("div");
 var closeDiv = document.createElement("div");
 var closeAction = document.createElement("button");
@@ -99,6 +101,10 @@ function makeNewElementDisappear(){
 }
 
 function makeApiCall(){
+    if(isAuth===false){
+        chrome.runtime.sendMessage({message: 'auth'});
+        return;
+    }
     explainCodes().then(() => {
         seeIfelementValue();
         document.body.style.display = "flex";
@@ -109,6 +115,10 @@ function makeApiCall(){
     });
 }
 function makeApiCallWholeText(){
+    if(isAuth===false){
+        chrome.runtime.sendMessage({message: 'auth'});
+        return;
+    }
     explainWholeText().then(() => {
         document.body.style.display = "flex";
         seeIfelementValue();
@@ -251,6 +261,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     
        }
     }
+
+    if(request.message === 'cookie'){
+        if(request.token === 'no'){
+            isAuth = false;
+        }
+        else{
+            isAuth = true;
+        }
+    }
+
+
+
+
     sendResponse({message: 'done'});
 });
 
@@ -285,6 +308,10 @@ textar.addEventListener('mouseup',(event)=>{
 }
 
 function makeApiCallOnSelected(){
+    if(isAuth===false){
+        chrome.runtime.sendMessage({message: 'auth'});
+        return;
+    }
     explainSelectedText().then(() => {
         document.body.style.display = "flex";
         document.body.appendChild(newElement);
