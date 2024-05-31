@@ -1,14 +1,14 @@
 
 {
     "manifest_version":3,
-    "version":"0.0.1",
-    "name":"CodeKitty",
-    "description":"This extension will help you to understand the code and the files of any github repository with help of AI",
+    "version":"0.0.2",
+    "name":"CodeKitty AI",
+    "description":"Understand large codebases of Github repositories with CodeKitty AI!",
     "action":{
         "default_icon":{
             "16":"images/icon16.png",
             "32":"images/icon32.png",
-            "48":"images/img48.png",
+            "48":"images/icon48.png",
             "128":"images/icon128.png"
 
         }
