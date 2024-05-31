@@ -1,16 +1,17 @@
 (function exe(){
-var filenames= document.getElementsByClassName('Link--primary');
+var filenames= document.getElementsByClassName('react-directory-truncate');
 var hiclass = document.getElementsByClassName('Box-sc-g0xbh4-0 bWpuBf');
 var textar = document.getElementById('read-only-cursor-text-area');
 var sticyheader=document.getElementById('StickyHeader');
 var newElement = document.getElementById('newElement');
+var reponame= document.getElementsByClassName('Truncate-text');
 var closeDiv = document.getElementById('closeDiv');
 var isAuth = false;
 
 var files='';
 var wholeText='';
 var innerhtml='';
-for(var i=0;i<filenames.length-1;i++){
+for(var i=0;i<filenames.length-1;i=i+2){
     files += filenames[i].innerText+' ';
 }
 
@@ -77,20 +78,36 @@ function beginButton(){
     button.style.display = "inline-block";
     button.style.fontSize = "16px";
     
-    if(!sticyheader){
-    button.onclick = makeApiCall;
-    hiclass[0].appendChild(button);
-    }else{
-        if(textar){
+    // if(!sticyheader){
+    // button.onclick = makeApiCall;
+    // hiclass[0].appendChild(button);
+    // }else{
+    //     if(textar){
+    //     button.onclick = makeApiCallWholeText;
+    //    sticyheader.appendChild(button);
+    //     }
+    
+    // }
+    if(textar){
         button.onclick = makeApiCallWholeText;
        sticyheader.appendChild(button);
-        }
+    
+    }else{
+        button.onclick = makeApiCall;
+      if(hiclass[0]){
+        hiclass[0].appendChild(button);
+      }else if(sticyheader){
+        sticyheader.appendChild(button);
+      }else{
+        console.log('No button found');
+      }
     
     }
 
 }
 function preprocessFileText(files){
- //replace space with ,
+ //remove first word
+  
  return files;
 }
 function makeNewElementDisappear(){
@@ -179,6 +196,8 @@ function seeIfelementValue(){
 
       evSource.onerror = function (event) {
           console.error('EventSource failed:', event);
+          const btnexplain = document.getElementById('explainButton');
+         btnexplain.disabled = false;
           newElement.innerText = newElement.innerText + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again";
           evSource.close();
       };
@@ -187,7 +206,7 @@ function seeIfelementValue(){
 
 
   async function explainCodes(){
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain all this github repo files ${preprocessFileText(files)}&model=gemma:2b`);
+    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain all this github repository files with repository name ${reponame[0].innerText} and file names ${preprocessFileText(files)}&model=gemma:2b`);
     evSource.onopen = function (event) {
           console.log('Connection opened');
           newElement.innerHTML = "Please wait...";
@@ -211,6 +230,8 @@ function seeIfelementValue(){
       evSource.onerror = function (event) {
           console.error('EventSource failed:', event);
           newElement.innerHTML = newElement.innerHTML + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again";
+          const btnexplain = document.getElementById('explainButton');
+            btnexplain.disabled = false;
           evSource.close();
       };
 
@@ -245,7 +266,7 @@ function upgradeHtml(fullStr){
         const matches = fullStr.match(codeRegex);
         for(let i=0;i<matches.length;i++){
             const str = matches[i].replace(/```/g,'');
-            fullStr = fullStr.replace(matches[i],`<code>${str}</code>`);
+            fullStr = fullStr.replace(matches[i],`<code style="padding: 3px;border: 1px solid white;">${str}</code>`);
         }
     }
     return fullStr;
