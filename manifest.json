@@ -3,7 +3,7 @@
     "manifest_version":3,
     "version":"0.0.2",
     "name":"CodeKitty AI",
-    "description":"Understand large codebases of Github repositories with CodeKitty AI!",
+    "description":"Understand large Github codebases ,repositories with CodeKitty AI!",
     "action":{
         "default_icon":{
             "16":"images/icon16.png",
