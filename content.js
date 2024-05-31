@@ -11,7 +11,7 @@ var files='';
 var wholeText='';
 var innerhtml='';
 for(var i=0;i<filenames.length-1;i++){
-    files += filenames[i].innerText+'  ';
+    files += filenames[i].innerText+' ';
 }
 
 var newElement = document.createElement("div");
@@ -64,6 +64,7 @@ function beginButton(){
    
     const button = document.createElement('button');
     button.innerHTML = 'Explain';
+    button.id = 'explainButton';
    //github green button color
     button.style.backgroundColor = "#238636";
     button.style.color = "white";
@@ -80,8 +81,10 @@ function beginButton(){
     button.onclick = makeApiCall;
     hiclass[0].appendChild(button);
     }else{
+        if(textar){
         button.onclick = makeApiCallWholeText;
        sticyheader.appendChild(button);
+        }
     
     }
 
@@ -92,12 +95,15 @@ function preprocessFileText(files){
 }
 function makeNewElementDisappear(){
     newElement.style.display === "none"?(newElement.style.display = "block",
-     closeAction.innerHTML = "Close"
+     closeAction.innerHTML = "Close",
+        closeDiv.style.right = "312px"
+
     ):(newElement.style.display = "none",
-    closeAction.innerHTML = "Open"
+    closeAction.innerHTML = "Open",
+    closeDiv.style.right = "0"
     
     );
-    closeDiv.style.right === "312px"?closeDiv.style.right = "0":closeDiv.style.right = "312px";
+   // closeDiv.style.right === "312px"?closeDiv.style.right = "0":closeDiv.style.right = "312px";
 }
 
 function makeApiCall(){
@@ -105,6 +111,9 @@ function makeApiCall(){
         chrome.runtime.sendMessage({message: 'auth'});
         return;
     }
+    //disable the button
+    const btnexplain = document.getElementById('explainButton');
+    btnexplain.disabled = true;
     explainCodes().then(() => {
         seeIfelementValue();
         document.body.style.display = "flex";
@@ -119,6 +128,8 @@ function makeApiCallWholeText(){
         chrome.runtime.sendMessage({message: 'auth'});
         return;
     }
+    const btnexplain = document.getElementById('explainButton');
+    btnexplain.disabled = true;
     explainWholeText().then(() => {
         document.body.style.display = "flex";
         seeIfelementValue();
@@ -155,6 +166,8 @@ function seeIfelementValue(){
       evSource.onmessage = function (event) {
         if(event.data === "sdjnjsdnsdka"){
             evSource.close();
+            const btnexplain = document.getElementById('explainButton');
+            btnexplain.disabled = false;
             return;
         }
         
@@ -181,7 +194,11 @@ function seeIfelementValue(){
       };
       evSource.onmessage = function (event) {
         if(event.data === "sdjnjsdnsdka"){
+            //enable the button
+            const btnexplain = document.getElementById('explainButton');
+            btnexplain.disabled = false;
             evSource.close();
+
             return
         }
         
@@ -285,8 +302,7 @@ textar.addEventListener('mouseup',(event)=>{
         selectedTextDiv.remove();
     }
     //get pixel position 
-    console.log(event.clientX);
-    console.log(event.clientY);
+   
     //create a div with position absolute and set the position to the above pixel position
     const div = document.createElement('button');
     div.style.position = "absolute";
@@ -312,8 +328,15 @@ function makeApiCallOnSelected(){
         chrome.runtime.sendMessage({message: 'auth'});
         return;
     }
+    const selectbtn= document.getElementById('selectedText');
+    selectbtn.remove();
     explainSelectedText().then(() => {
         document.body.style.display = "flex";
+        //check if already appended
+        seeIfelementValue();
+       if(newElement.style.display === "none"){
+        newElement.style.display = "block";
+         }
         document.body.appendChild(newElement);
         document.body.appendChild(closeDiv);
         closeDiv.style.right = "312px";
