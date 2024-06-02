@@ -1,4 +1,6 @@
+import  './markdown.js';
 (function exe(){
+
 var filenames= document.getElementsByClassName('react-directory-truncate');
 var hiclass = document.getElementsByClassName('Box-sc-g0xbh4-0 bWpuBf');
 var textar = document.getElementById('read-only-cursor-text-area');
@@ -14,7 +16,7 @@ var innerhtml='';
 for(var i=0;i<filenames.length-1;i=i+2){
     files += filenames[i].innerText+' ';
 }
-
+document.head.appendChild(cdnjs);
 var newElement = document.createElement("div");
 var closeDiv = document.createElement("div");
 var closeAction = document.createElement("button");
@@ -236,6 +238,19 @@ function seeIfelementValue(){
       };
 
 }
+
+function markDownToHtml(markdown){
+    const converter = new showdown.Converter();
+    const html = converter.makeHtml(markdown);
+    return html;
+}
+
+
+
+
+
+
+
 function upgradeHtml(fullStr){
     //starts with ** and ends with **
    
@@ -243,6 +258,10 @@ function upgradeHtml(fullStr){
     //regex if starts with * and ends with .
     const regex2 = /\*(.*?)\./g;
     const codeRegex = /```(.*?)```/g;
+    //start digit and ends with .
+    const digitRegex = /\d+\./g;
+    //start with ` and ends with `
+    const codeRegex2 = /`(.*?)`/g;
     if(fullStr.match(regex)){
         const matches = fullStr.match(regex);
         for(let i=0;i<matches.length;i++){
@@ -266,7 +285,21 @@ function upgradeHtml(fullStr){
         const matches = fullStr.match(codeRegex);
         for(let i=0;i<matches.length;i++){
             const str = matches[i].replace(/```/g,'');
-            fullStr = fullStr.replace(matches[i],`<code style="padding: 3px;border: 1px solid white;">${str}</code>`);
+            fullStr = fullStr.replace(matches[i],`<code>${str}</code>`);
+        }
+    }
+    if(fullStr.match(digitRegex)){
+        const matches = fullStr.match(digitRegex);
+        for(let i=0;i<matches.length;i++){
+            const str = matches[i].replace(/\./g,'');
+            fullStr = fullStr.replace(matches[i],`<h3>${str}</h3>`);
+        }
+    }
+    if(fullStr.match(codeRegex2)){
+        const matches = fullStr.match(codeRegex2);
+        for(let i=0;i<matches.length;i++){
+            const str = matches[i].replace(/`/g,'');
+            fullStr = fullStr.replace(matches[i],`<strong>${str}</strong>`);
         }
     }
     return fullStr;
@@ -366,7 +399,7 @@ function makeApiCallOnSelected(){
 }
 async function explainSelectedText(){
     const selectedText = window.getSelection().toString();
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain this code ${selectedText}&model=gemma:2b`, {
+    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain this code in detail including programming language syntax used additional example similar to this ${selectedText}&model=gemma:2b`, {
         withCredentials: true
     });
     evSource.onopen = function (event) {
@@ -380,7 +413,8 @@ async function explainSelectedText(){
         }
         
          wholeText+=event.data;
-        const nested =upgradeHtml(wholeText);
+       // const nested =upgradeHtml(wholeText);
+       const nested =markDownToHtml(wholeText);
          newElement.innerHTML = nested;
         
       };
