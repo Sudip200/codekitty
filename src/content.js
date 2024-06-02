@@ -1,3 +1,5 @@
+import showdown from 'showdown';
+
 (function exe(){
 var filenames= document.getElementsByClassName('react-directory-truncate');
 var hiclass = document.getElementsByClassName('Box-sc-g0xbh4-0 bWpuBf');
@@ -236,6 +238,10 @@ function seeIfelementValue(){
       };
 
 }
+function markdownToHtml(markdown){
+    const converter = new showdown.Converter();
+    return converter.makeHtml(markdown);
+}
 function upgradeHtml(fullStr){
     //starts with ** and ends with **
    
@@ -380,7 +386,7 @@ async function explainSelectedText(){
         }
         
          wholeText+=event.data;
-        const nested =upgradeHtml(wholeText);
+        const nested =markdownToHtml(wholeText);
          newElement.innerHTML = nested;
         
       };
