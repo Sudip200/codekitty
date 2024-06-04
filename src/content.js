@@ -16,9 +16,61 @@ var innerhtml='';
 for(var i=0;i<filenames.length-1;i=i+2){
     files += filenames[i].innerText+' ';
 }
-
+var newElementWrapper = document.createElement("div");
+newElementWrapper.id = "newElementWrapper";
 var newElement = document.createElement("div");
 var closeDiv = document.createElement("div");
+var textDiv = document.createElement("div");
+textDiv.id = "textDiv";
+textDiv.innerHTML =`<div style="
+position: fixed;
+bottom: 0px;
+width: 312px;
+right: 0px;
+padding: 10px;
+display: grid;
+grid-template-columns: 1fr auto;
+grid-gap: 10px;
+background: #0b0a0a;
+border-radius: 10px;
+border: 1px solid #ccc;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+align-items: center;
+font-family: Arial, sans-serif;
+">
+<input type="text" placeholder="Type your message..." style="
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    /* width: 300px; */
+" data-listener-added_717b9331="true">
+<button style="
+    padding: 10px;
+    font-size: 16px;
+    background-color: #0b6521;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+" onmouseover="this.style.backgroundColor='#0056b3'" onmouseout="this.style.backgroundColor='#007bff'">
+    Send
+</button>
+</div>`;
+
+newElementWrapper.appendChild(newElement);
+newElementWrapper.appendChild(textDiv);
+//document.body.appendChild(newElementWrapper);
+//document.body.appendChild(closeDiv);
+newElementWrapper.style.display = "none";
+
+
+
+
+
+
 var closeAction = document.createElement("button");
 //set it at right
 newElement.style.position = "fixed";
@@ -61,6 +113,9 @@ closeAction.style.fontSize = "16px";
 
 closeAction.style.cursor = "pointer";
 closeAction.onclick = makeNewElementDisappear;
+document.body.appendChild(closeDiv);
+closeDiv.style.right = "0px";
+closeDiv.appendChild(closeAction);
 
 
 function beginButton(){
@@ -113,13 +168,16 @@ function preprocessFileText(files){
  return files;
 }
 function makeNewElementDisappear(){
-    newElement.style.display === "none"?(newElement.style.display = "block",
+    if(!newElementWrapper){
+        document.body.appendChild(newElementWrapper);
+    }
+   (newElementWrapper.style.display === "none" && closeDiv.style.right=="0px")?(newElementWrapper.style.display = "block",
      closeAction.innerHTML = "Close",
         closeDiv.style.right = "312px"
 
-    ):(newElement.style.display = "none",
+    ):(newElementWrapper.style.display = "none",
     closeAction.innerHTML = "Open",
-    closeDiv.style.right = "0"
+    closeDiv.style.right = "0px"
     
     );
    // closeDiv.style.right === "312px"?closeDiv.style.right = "0":closeDiv.style.right = "312px";
@@ -135,9 +193,9 @@ function makeApiCall(){
     btnexplain.disabled = true;
     explainCodes().then(() => {
         seeIfelementValue();
-        document.body.style.display = "flex";
-        document.body.appendChild(newElement);
-        document.body.appendChild(closeDiv);
+        document.body.appendChild(newElementWrapper);
+        newElementWrapper.style.display = "block";
+       // document.body.appendChild(closeDiv);
         closeDiv.style.right = "312px";
         closeDiv.appendChild(closeAction);
     });
@@ -150,9 +208,10 @@ function makeApiCallWholeText(){
     const btnexplain = document.getElementById('explainButton');
     btnexplain.disabled = true;
     explainWholeText().then(() => {
-        document.body.style.display = "flex";
+       
         seeIfelementValue();
-        document.body.appendChild(newElement);
+        document.body.appendChild(newElementWrapper);
+        newElementWrapper.style.display = "block";
         document.body.appendChild(closeDiv);
         closeDiv.style.right = "312px";
         closeDiv.appendChild(closeAction);
@@ -191,7 +250,7 @@ function seeIfelementValue(){
         }
         
          wholeText+=event.data;
-        const nested =upgradeHtml(wholeText);
+        const nested =markdownToHtml(wholeText);
          newElement.innerHTML = nested;
        
       };
@@ -208,7 +267,7 @@ function seeIfelementValue(){
 
 
   async function explainCodes(){
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain all this github repository files with repository name ${reponame[0].innerText} and file names ${preprocessFileText(files)}&model=gemma:2b`);
+    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain all this github repository files point wise  with repository name ${reponame[0].innerText} and file names ${preprocessFileText(files)}&model=gemma:2b`);
     evSource.onopen = function (event) {
           console.log('Connection opened');
           newElement.innerHTML = "Please wait...";
@@ -224,7 +283,7 @@ function seeIfelementValue(){
         }
         
          wholeText+=event.data;
-        const nested =upgradeHtml(wholeText);
+        const nested =markdownToHtml(wholeText);
          newElement.innerHTML = nested;
         
       };
@@ -358,13 +417,12 @@ function makeApiCallOnSelected(){
     const selectbtn= document.getElementById('selectedText');
     selectbtn.remove();
     explainSelectedText().then(() => {
-        document.body.style.display = "flex";
         //check if already appended
         seeIfelementValue();
        if(newElement.style.display === "none"){
         newElement.style.display = "block";
          }
-        document.body.appendChild(newElement);
+        document.body.appendChild(newElementWrapper);
         document.body.appendChild(closeDiv);
         closeDiv.style.right = "312px";
         closeDiv.appendChild(closeAction);
