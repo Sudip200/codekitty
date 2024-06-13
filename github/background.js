@@ -10,6 +10,20 @@ chrome.runtime.onInstalled.addListener(function() {
         }
     });
 });
+function sendMessage(tabId, cookie){
+    chrome.tabs.sendMessage(tabId, {message: "updated"}, response => {
+        console.log(response);
+    });
+    if(cookie){
+        chrome.tabs.sendMessage(tabId, {message: "cookie", token: cookie.value}, response => {
+            console.log(response);
+        });
+    }else{
+        chrome.tabs.sendMessage(tabId, {message: "cookie", token: 'no'}, response => {
+            console.log(response);
+        });
+    }
+}
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       
     if (changeInfo.status === 'complete' ) {
@@ -23,21 +37,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         //get cookie from the tab
         chrome.cookies.get({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api/',name:'token'}, function(cookie) {
             console.log(cookie);
-          
-            chrome.scripting.executeScript({target: {tabId: tabId}, files:["dist/bundle.js"]}).then(() => {
-                chrome.tabs.sendMessage(tabId, {message: "updated"}, response => {
-                    console.log(response);
-                });
-                if(cookie){
-                    chrome.tabs.sendMessage(tabId, {message: "cookie", token: cookie.value}, response => {
-                        console.log(response);
-                    });
-                }else{
-                    chrome.tabs.sendMessage(tabId, {message: "cookie", token: 'no'}, response => {
-                        console.log(response);
-                    });
-                }
-            });
+            sendMessage(tabId, cookie);
           
         });
         
@@ -51,3 +51,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.create({url:'auth.html'});
      }
     });
+    

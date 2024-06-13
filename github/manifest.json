@@ -1,21 +1,18 @@
 
 {
     "manifest_version":3,
-    "version":"0.0.3",
+    "version":"0.0.5",
     "name":"CodeKitty AI - Chat with any Github repository!",
     "description":"Understand large Github codebases ,repositories with CodeKitty AI!",
     "action":{
         "default_icon":{
             "16":"images/icon16.png",
-            "32":"images/icon32.png",
             "48":"images/codekitty.png",
             "128":"images/icon128.png"
-
         }
     },
    
     "permissions":[
-        "scripting",
         "tabs",
         "cookies"
     ],
@@ -27,10 +24,12 @@
     ],
     "background": {
       "service_worker": "background.js"
-    }
-   
-   
-      
+    },
     
-    
+    "content_scripts": [
+        {
+          "matches": ["https://github.com/*"],
+            "js": ["dist/bundle.js"]
+        }
+    ]
     }

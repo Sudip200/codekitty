@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/content.js', // Your main content script
   output: {
     filename: 'bundle.js', // The output bundle file
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'github', 'dist')
   },
   module: {
     rules: [
