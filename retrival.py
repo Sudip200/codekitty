@@ -2,23 +2,11 @@ import requests
 import bs4
 
 
-res=requests.get('https://github.com/Sudip200/devdas-editor')
-basUrl = 'https://github.com'
-soup=bs4.BeautifulSoup(res.text,'html.parser')
-dirnames = soup.find_all('div',class_='react-directory-truncate')
-for dirname in dirnames:
-    print(dirname.text)
-for link in soup.find_all('a'):
-    if link.get('href').startswith('/Sudip200/devdas-editor'):
-       print(basUrl+link.get('href'))
-res2= requests.get('https://github.com/Sudip200/devdas-editor/blob/master/index.js')
-soup2=bs4.BeautifulSoup(res2.text,'html.parser')
-textar = soup2.find('textarea',id='read-only-cursor-text-area')
-print(textar)
+res=requests.get('https://github.com/Sudip200/devdas-editor/blob/master/index.js',headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'})
+#get classname 'Box-sc-g0xbh4-0 cVawVl' 
+ 
 
-
-
-        
-        
-    
+with open('index.html','w') as f:
+    f.write(res.text)
+    f.close()
     

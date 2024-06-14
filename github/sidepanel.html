@@ -1,0 +1,85 @@
+
+html
+Copy code
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CodeKitty - AI</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #1e1e1e;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #chat-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 10px;
+        overflow-y: auto;
+      }
+
+      #input-container {
+        display: flex;
+        padding: 20px;
+        border-top: 1px solid #333;
+      }
+
+      #message-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff;
+        margin-right: 10px;
+      }
+
+      #send-button {
+        background-color: #2ea44f;
+        border: none;
+        padding: 10px 20px;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      #send-button:hover {
+        background-color: #238636;
+      }
+
+      .message {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #444;
+      }
+
+      .message.user {
+        align-self: flex-end;
+        background-color: #007acc;
+      }
+
+      .message.bot {
+        align-self: flex-start;
+        background-color: #444;
+      }
+    </style>
+    <script src="sidepanel.js" defer></script>
+  </head>
+  <body>
+    <div id="chat-container"></div>
+    <div id="input-container">
+      <input type="text" id="message-input" placeholder="Type a message..." />
+      <button id="send-button">Send</button>
+    </div>
+
+   
+  </body>
+</html>
