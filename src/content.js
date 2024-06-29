@@ -1,6 +1,6 @@
 import showdown from 'showdown';
 var exetime = 0;
-(function exe(){
+function exe(){
 
 
 var filenames= document.getElementsByClassName('react-directory-truncate');
@@ -11,6 +11,8 @@ var newElement = document.getElementById('newElement');
 var reponame= document.getElementsByClassName('Truncate-text');
 var textInput = document.getElementById('message');
 var closeDiv = document.getElementById('closeDiv');
+var owner = document.getElementsByClassName('AppHeader-context-item-label')[0].innerText;
+var docs = document.getElementsByClassName('markdown-body entry-content container-lg')
 var isAuth = false;
 
 var files='';
@@ -338,6 +340,10 @@ async function sendMessage2(inwhich) {
     let selectedText = '';
     let question = '';
     let field = '';
+    let text;
+    if(docs[0]){
+        text = docs[0].innerText;
+    }
     let messageElement = document.getElementById('message');
     let newElement = document.getElementById('newElement');
     let value = messageElement.value;
@@ -365,13 +371,26 @@ async function sendMessage2(inwhich) {
     }else{
         if(files.length>0){
             if(inwhich === 'code-value' && value.length>0){
+                if(text){
+                    
+                     question = value;
+                     messagePrompt = `This is the the github repo name ${reponame[0].innerText} and files ${files} and readme text ${text} answer this question based on the repo ${value}`;
+                }else{
          messagePrompt = `This is the the github repo name ${reponame[0].innerText} and files ${files} answer this question based on the repo ${value}`;
          question = value;
          field = 'repo-value';
-            }else if(inwhich === 'repo-files'){
+           } }else if(inwhich === 'repo-files'){
+              
+                if(text){
+                  
+                    question ='explain all this github repository files point wise';
+                    messagePrompt = `This is the the github repo name ${reponame[0].innerText} and files ${files} and readme text ${text} explain these files point wise`;
+               }
+               else{
                 messagePrompt = `This is the the github repo name '${reponame[0].innerText}' and files '${files}' explain these files point wise`;
                 question ='explain all this github repository files point wise';
                 field = 'repo-files';
+               }
             }
         }
     }
@@ -606,10 +625,10 @@ function refreshButton(){
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.message === 'updated') {
+       
         removeElements();
-        //exe only once
         exe();
-        
+        sendResponse({ message: 'done' });
     }
 
     if(request.message === 'cookie'){
@@ -619,13 +638,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         else{
             isAuth = true;
         }
+        sendResponse({message: 'done'});
     }
+    
 
-
-
-
-    sendResponse({message: 'done'});
+    //sendResponse({message: 'done'});
 });
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log(request.message);
+  if(request.message === 'xxxx'){
+    console.log('xxxx');
+      sendResponse({owner: owner,repo:reponame[0].innerText});
+  }
+});
+
 
 if(textar){
 textar.addEventListener('mouseup',(event)=>{
@@ -713,7 +739,8 @@ async function explainSelectedText(){
 
 
 
-})();
+};
+exe();
 
 
 

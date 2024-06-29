@@ -1,6 +1,4 @@
 
-html
-Copy code
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,6 +11,7 @@ Copy code
         color: #ffffff;
         display: flex;
         flex-direction: column;
+        width:  100%;
         height: 100vh;
       }
 
@@ -74,7 +73,11 @@ Copy code
     <script src="sidepanel.js" defer></script>
   </head>
   <body>
-    <div id="chat-container"></div>
+    <div id="owner">
+      
+    </div>
+    <div id="chat-container">
+    </div>
     <div id="input-container">
       <input type="text" id="message-input" placeholder="Type a message..." />
       <button id="send-button">Send</button>

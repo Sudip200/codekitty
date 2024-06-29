@@ -46,9 +46,7 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
           
         });
         //send the url sidepanel 
-        chrome.tabs.sendMessage(tabId, {message: "url", url: tab.url}, response => {
-            console.log(response);
-        });
+     
        }else{
         chrome.sidePanel.setOptions({
             tabId,
