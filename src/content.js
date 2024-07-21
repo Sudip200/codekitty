@@ -1,8 +1,5 @@
 import showdown from 'showdown';
-var exetime = 0;
-function exe(){
-
-
+(function exe(){
 var filenames= document.getElementsByClassName('react-directory-truncate');
 var hiclass = document.getElementsByClassName('Box-sc-g0xbh4-0 bWpuBf');
 var textar = document.getElementById('read-only-cursor-text-area');
@@ -88,15 +85,6 @@ containerDiv.appendChild(sendButton);
 textDiv.appendChild(containerDiv);
 
 
-
-
-
-
-
-
-
-
-
 newElementWrapper.appendChild(newElement);
 newElementWrapper.appendChild(textDiv);
 //document.body.appendChild(newElementWrapper);
@@ -107,11 +95,6 @@ var newElementWrapperID = document.getElementById('newElementWrapper');
 if(!newElementWrapperID){
     document.body.appendChild(newElementWrapper);
 }
-
-
-
-
-
 
 var closeAction = document.createElement("button");
 //set it at right
@@ -154,7 +137,9 @@ closeAction.style.fontSize = "16px";
 
 
 closeAction.style.cursor = "pointer";
-closeAction.onclick = makeNewElementDisappear;
+closeAction.onclick = ()=>{
+    makeNewElementDisappear();
+};
 //check if body contains closeDiv
 var closeDivid = document.getElementById('closeDiv');
 if(!closeDivid && (textar || files.length>0)){
@@ -164,6 +149,23 @@ if(!closeDivid && (textar || files.length>0)){
 }
 closeDiv.style.right = "0px";
 closeDiv.appendChild(closeAction);
+
+//sidepanel button 
+
+const button = document.createElement('button');
+button.textContent = 'Open Side Panel';
+button.style.position = 'fixed';
+button.style.bottom = '10px';
+button.style.right = '10px';
+button.style.zIndex = 1000;
+document.body.appendChild(button);
+
+// Add onclick listener to the button
+button.addEventListener('click', () => {
+    //reload the page
+  chrome.runtime.sendMessage({ action: 'open_side_panel' });
+  window.location.reload();
+});
 
 
 
@@ -623,11 +625,10 @@ function refreshButton(){
     }
 }
 
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.message === 'updated') {
-       
-        removeElements();
-        exe();
+    
         sendResponse({ message: 'done' });
     }
 
@@ -739,8 +740,10 @@ async function explainSelectedText(){
 
 
 
-};
-exe();
+}
+)();
+
+
 
 
 
