@@ -87,16 +87,6 @@ containerDiv.appendChild(inputBox);
 containerDiv.appendChild(sendButton);
 textDiv.appendChild(containerDiv);
 
-
-
-
-
-
-
-
-
-
-
 newElementWrapper.appendChild(newElement);
 newElementWrapper.appendChild(textDiv);
 //document.body.appendChild(newElementWrapper);
@@ -107,11 +97,6 @@ var newElementWrapperID = document.getElementById('newElementWrapper');
 if(!newElementWrapperID){
     document.body.appendChild(newElementWrapper);
 }
-
-
-
-
-
 
 var closeAction = document.createElement("button");
 //set it at right
@@ -166,7 +151,7 @@ closeDiv.style.right = "0px";
 closeDiv.appendChild(closeAction);
 
 
-
+//button to explain the repo files
 function beginButton(){
    
     const button = document.createElement('button');
@@ -204,8 +189,10 @@ function beginButton(){
 
 }
 function preprocessFileText(files){
+    //function to preprocess file text (nothing doing now)
  return files;
 }
+//close button action to make newElement disappear
 function makeNewElementDisappear(){
    //check if newElementWrapper is there in body
    let newElementWrapperid = document.getElementById('newElementWrapper');
@@ -225,97 +212,9 @@ function makeNewElementDisappear(){
    // closeDiv.style.right === "312px"?closeDiv.style.right = "0":closeDiv.style.right = "312px";
 }
 
-function makeApiCall(){
-    if(isAuth===false){
-        chrome.runtime.sendMessage({message: 'auth'});
-        return;
-    }
-    //disable the button
-    const btnexplain = document.getElementById('explainButton');
-    btnexplain.disabled = true;
-    explainCodes().then(() => {
-        seeIfelementValue();
-        document.body.appendChild(newElementWrapper);
-        newElementWrapper.style.display = "block";
-       // document.body.appendChild(closeDiv);
-        closeDiv.style.right = "312px";
-        closeDiv.appendChild(closeAction);
-    });
-}
-function makeApiCallWholeText(){
-    if(isAuth===false){
-        chrome.runtime.sendMessage({message: 'auth'});
-        return;
-    }
-    const btnexplain = document.getElementById('explainButton');
-    btnexplain.disabled = true;
-    explainWholeText().then(() => {
-       
-        seeIfelementValue();
-        document.body.appendChild(newElementWrapper);
-        newElementWrapper.style.display = "block";
-       // document.body.appendChild(closeDiv);
-        closeDiv.style.right = "312px";
-        closeDiv.appendChild(closeAction);
-    });
-}
-
-function seeIfelementValue(){
-    setInterval(()=>{
-        if(newElement.innerText.length==0){
-            newElement.innerText = "Please wait...";
-        }else{
-            clearInterval();
-        }
-    },1000);
-
-}
 
 
-
-
-
- //document.getElementById('sendButton').onclick=sendMessage;
-
- function sendMessage(){
-    if(isAuth===false){
-        chrome.runtime.sendMessage({message: 'auth'});
-        return;
-    }
-    let message = document.getElementById('message')
-    let value = message.value;
-    message.value = '';
-    let previousText = newElement.innerHTML;
-    if(previousText.includes('Please wait...')){
-        previousText.replace('Please wait...','')
-    }
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=${value}&model=gemma:2b`);
-    evSource.onopen = function (event) {
-          console.log('Connection opened');
-          newElement.innerHTML = "Please wait....";
-      };
-      evSource.onmessage = function (event) {
-        if(event.data === "sdjnjsdnsdka"){
-            evSource.close();
-            return
-        }
-        let msg = event.data;
-         wholeText += msg;
-       
-         let promptAndres = `### ${value} \n\n ${wholeText}`;
-         
-         const nested = markdownToHtml(promptAndres);
-         newElement.innerHTML = previousText + '<br>' + nested;
-        
-      };
-
-      evSource.onerror = function (event) {
-          console.error('EventSource failed:', event);
-          newElement.innerHTML = newElement.innerHTML + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again.";
-          evSource.close();
-      };
-
-}
+//main function to send message to server
 async function sendMessage2(inwhich) {
     if (isAuth === false) {
         chrome.runtime.sendMessage({ message: 'auth' });
@@ -450,74 +349,8 @@ async function sendMessage2(inwhich) {
 
 
 
- async function explainWholeText(){
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain this code ${textar.value}&model=gemma:2b`);
-    evSource.onopen = function (event) {
-          console.log('Connection opened');
-          if(textar.value.length>2000){
-            newElement.innerText = "Please wait.This file is too large, may take some time...";
-          }else{
-            newElement.innerText = "Please wait...";
-          }
-         
-      };
-      evSource.onmessage = function (event) {
-        if(event.data === "sdjnjsdnsdka"){
-            evSource.close();
-            const btnexplain = document.getElementById('explainButton');
-            btnexplain.disabled = false;
-            return;
-        }
-        
-         wholeText+=event.data;
-        const nested =markdownToHtml(wholeText);
-         newElement.innerHTML = nested;
-       
-      };
 
-      evSource.onerror = function (event) {
-          console.error('EventSource failed:', event);
-          const btnexplain = document.getElementById('explainButton');
-         btnexplain.disabled = false;
-          newElement.innerText = newElement.innerText + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again";
-          evSource.close();
-      };
-
- }
-
-
-  async function explainCodes(){
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain all this github repository files point wise  with repository name ${reponame[0].innerText} and file names ${preprocessFileText(files)}&model=gemma:2b`);
-    evSource.onopen = function (event) {
-          console.log('Connection opened');
-          newElement.innerHTML = "Please wait...";
-      };
-      evSource.onmessage = function (event) {
-        if(event.data === "sdjnjsdnsdka"){
-            //enable the button
-            const btnexplain = document.getElementById('explainButton');
-            btnexplain.disabled = false;
-            evSource.close();
-
-            return
-        }
-        
-         wholeText+=event.data;
-         let first = `#${reponame[0].innerText} \n\n ${wholeText}`;
-        const nested =markdownToHtml(first);
-         newElement.innerHTML = newElement.innerHTML + nested;
-        
-      };
-
-      evSource.onerror = function (event) {
-          console.error('EventSource failed:', event);
-          newElement.innerHTML = newElement.innerHTML + `\n\n` + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again";
-          const btnexplain = document.getElementById('explainButton');
-            btnexplain.disabled = false;
-          evSource.close();
-      };
-
-}
+//convert markdown to html using showdown
 function markdownToHtml(markdown){
     const converter = new showdown.Converter();
     //configure the showdown
@@ -525,45 +358,8 @@ function markdownToHtml(markdown){
     converter.setOption('simpleLineBreaks', true);
     //adding monaco editor style in code block
     converter.setFlavor('github');
-    
-
   
     return converter.makeHtml(markdown);
-}
-function upgradeHtml(fullStr){
-    //starts with ** and ends with **
-   
-    const regex = /\*\*(.*?)\*\*/g;
-    //regex if starts with * and ends with .
-    const regex2 = /\*(.*?)\./g;
-    const codeRegex = /```(.*?)```/g;
-    if(fullStr.match(regex)){
-        const matches = fullStr.match(regex);
-        for(let i=0;i<matches.length;i++){
-            const str = matches[i].replace(/\*\*/g,'');
-            fullStr = fullStr.replace(matches[i],`<h3>${str}</h3>`);
-        }
-        //check if new line is there
-    }
-    //if matchs new line
-    if(fullStr.match(/\n/g)){
-        fullStr = fullStr.replace(/\n/g,'<br>');
-    }
-    if(fullStr.match(regex2)){
-        const matches = fullStr.match(regex2);
-        for(let i=0;i<matches.length;i++){
-            const str = matches[i].replace('*','');
-            fullStr = fullStr.replace(matches[i],`<p style="color:#c4c4c4;">${str}</p>`);
-        }
-    }
-    if(fullStr.match(codeRegex)){
-        const matches = fullStr.match(codeRegex);
-        for(let i=0;i<matches.length;i++){
-            const str = matches[i].replace(/```/g,'');
-            fullStr = fullStr.replace(matches[i],`<code style="padding: 3px;border: 1px solid white;">${str}</code>`);
-        }
-    }
-    return fullStr;
 }
 
 
@@ -582,6 +378,7 @@ if(hiclass[0]) {
         beginButton();
     }
 }
+
  async function removeElements(){
     const newElement = document.getElementById('newElement');
     //const closeDiv = document.getElementById('closeDiv');
@@ -606,7 +403,7 @@ function refreshButton(){
     refreshButton.innerHTML = 'Click to Refresh Page to get updated content';
     refreshButton.id = 'refreshButton';
     refreshButton.style.border = "1px solid white";
-    refreshButton.style.padding = "10px";
+    refreshButton.style.padding = "17px";
     refreshButton.style.color = "white";
     refreshButton.style.borderRadius = "6px";
     refreshButton.style.height='35px';
@@ -622,12 +419,10 @@ function refreshButton(){
         newElement.appendChild(refreshButton);
     }
 }
-
+//get cookie and check if user is authenticated ,get tab update
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.message === 'updated') {
-       
-        removeElements();
-        exe();
+        refreshButton();
         sendResponse({ message: 'done' });
     }
 
@@ -640,10 +435,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
         sendResponse({message: 'done'});
     }
-    
-
-    //sendResponse({message: 'done'});
 });
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(request.message);
   if(request.message === 'xxxx'){
@@ -652,7 +445,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-
+//select code for explanation from text area
 if(textar){
 textar.addEventListener('mouseup',(event)=>{
     //first remove the div if already there
@@ -683,62 +476,6 @@ textar.addEventListener('mouseup',(event)=>{
     }
 });
 }
-
-function makeApiCallOnSelected(){
-    if(isAuth===false){
-        chrome.runtime.sendMessage({message: 'auth'});
-        return;
-    }
-    const selectbtn= document.getElementById('selectedText');
-    selectbtn.remove();
-   
-    sendMessage2().then(() => {
-        //check if already appended
-        seeIfelementValue();
-        const newElementWrapper = document.getElementById('newElementWrapper');
-       if(newElementWrapper.style.display === "none"){
-        newElementWrapper.style.display = "block";
-        }
-
-        if(closeDiv.style.right === "0px" && newElementWrapper.style.display === "block"){
-
-        
-        closeDiv.style.right = "312px";
-        }
-        closeDiv.appendChild(closeAction);
-      
-    });
-}
-async function explainSelectedText(){
-    const selectedText = window.getSelection().toString();
-    const evSource = new EventSource(`https://sudipto.eastus.cloudapp.azure.com:8080/api/generate?prompt=explain this code ${selectedText}&model=gemma:2b`, {
-        withCredentials: true
-    });
-    evSource.onopen = function (event) {
-          console.log('Connection opened');
-          newElement.innerHTML = "Please wait....";
-      };
-      evSource.onmessage = function (event) {
-        if(event.data === "sdjnjsdnsdka"){
-            evSource.close();
-            return
-        }
-        
-         wholeText+=event.data;
-        const nested =markdownToHtml(wholeText);
-         newElement.innerHTML = nested;
-        
-      };
-
-      evSource.onerror = function (event) {
-          console.error('EventSource failed:', event);
-          newElement.innerHTML = newElement.innerHTML + "Something went wrong. This may be due to large text or network issue or our server is in maintenance. Please try again.";
-          evSource.close();
-      };
-}
-
-
-
 };
 exe();
 
