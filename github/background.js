@@ -24,7 +24,7 @@ function sendMessage(tabId, cookie){
         });
     }
 }
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
       
     if (changeInfo.status === 'complete' ) {
       
@@ -35,13 +35,23 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
        if(tab.url.includes(url)){
 
         //get cookie from the tab
-        chrome.cookies.get({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api/',name:'token'}, function(cookie) {
+        chrome.sidePanel.setOptions({
+            tabId,
+            path: 'sidepanel.html',
+            enabled: true
+          });
+      await  chrome.cookies.get({url:'https://sudipto.eastus.cloudapp.azure.com:8080/api/',name:'token'}, function(cookie) {
             console.log(cookie);
             sendMessage(tabId, cookie);
           
         });
-        
-
+        //send the url sidepanel 
+     
+       }else{
+        chrome.sidePanel.setOptions({
+            tabId,
+            enabled: false
+          });
        
        }
     }
@@ -51,4 +61,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.tabs.create({url:'auth.html'});
      }
     });
+    chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
     
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'open_side_panel') {
+        chrome.sidePanel.open({ tabId: sender.tab.id });
+      chrome.sidePanel.setOptions({
+        tabId: sender.tab.id,
+        path: 'sidepanel.html',
+        enabled: true,
+      });
+    }
+  });

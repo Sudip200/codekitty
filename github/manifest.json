@@ -5,6 +5,7 @@
     "name":"CodeKitty AI - Chat with any Github repository!",
     "description":"Understand large Github codebases ,repositories with CodeKitty AI!",
     "action":{
+      
         "default_icon":{
             "16":"images/icon16.png",
             "48":"images/codekitty.png",
@@ -14,7 +15,8 @@
    
     "permissions":[
         "tabs",
-        "cookies"
+        "cookies",
+        "sidePanel"
     ],
     
     "host_permissions": [
@@ -25,7 +27,9 @@
     "background": {
       "service_worker": "background.js"
     },
-    
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
     "content_scripts": [
         {
           "matches": ["https://github.com/*"],
