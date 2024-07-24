@@ -65,3 +65,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error) => console.error(error));
     
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'open_side_panel') {
+        chrome.sidePanel.open({ tabId: sender.tab.id });
+      chrome.sidePanel.setOptions({
+        tabId: sender.tab.id,
+        path: 'sidepanel.html',
+        enabled: true,
+      });
+    }
+  });

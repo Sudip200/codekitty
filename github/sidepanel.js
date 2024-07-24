@@ -15,7 +15,7 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     var tab = tabs[0];
     console.log(tab.url);
    chrome.tabs.sendMessage(tab.id, {message: "xxxx"}, response => {
-        chat_container.innerHTML = response.owner+response.repo;
+        //chat_container.innerHTML = response.owner+response.repo;
         //owner = response.owner;
        // repo = response.repo;
         //ownerdiv.innerHTML = `Owner: ${owner} Repo: ${repo}`

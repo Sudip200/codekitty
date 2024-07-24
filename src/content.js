@@ -188,6 +188,29 @@ function beginButton(){
     }
 
 }
+//sidepanel button to open sidepanel
+const sidebutton = document.createElement('button');
+sidebutton.innerHTML = 'CodeKitty';
+sidebutton.style.backgroundColor = "#238636";
+sidebutton.style.color = "white";
+sidebutton.style.borderRadius = "6px";
+sidebutton.style.height='35px';
+sidebutton.style.border = "none";
+sidebutton.style.padding = "3px 20px";
+sidebutton.style.textAlign = "center";  
+sidebutton.style.position = "fixed";
+sidebutton.style.bottom = "0";
+sidebutton.style.left = "0";
+sidebutton.style.zIndex = "1000";
+document.body.appendChild(sidebutton);
+console.log('sidebutton added');
+//sidepanel open button 
+sidebutton.addEventListener('click', () => {
+    //reload the page
+  chrome.runtime.sendMessage({ action: 'open_side_panel' });
+  window.location.reload();
+});
+
 function preprocessFileText(files){
     //function to preprocess file text (nothing doing now)
  return files;
@@ -211,7 +234,6 @@ function makeNewElementDisappear(){
     );
    // closeDiv.style.right === "312px"?closeDiv.style.right = "0":closeDiv.style.right = "312px";
 }
-
 
 
 //main function to send message to server
@@ -400,18 +422,15 @@ if(hiclass[0]) {
 function refreshButton(){
     //add refresh button in newElementWrapper
     const refreshButton = document.createElement('button');
-    refreshButton.innerHTML = 'Click to Refresh Page to get updated content';
+    refreshButton.innerText = 'Refresh Page to get updated content';
     refreshButton.id = 'refreshButton';
     refreshButton.style.border = "1px solid white";
-    refreshButton.style.padding = "17px";
     refreshButton.style.color = "white";
     refreshButton.style.borderRadius = "6px";
     refreshButton.style.height='35px';
     refreshButton.onclick = function(){
         location.reload();
     };
-    refreshButton.style.border = "none";
-    refreshButton.style.padding = "3px 20px";
     refreshButton.style.textAlign = "center";
   //check if refresh button is already there
   let refreshButtonId = document.getElementById('refreshButton');
